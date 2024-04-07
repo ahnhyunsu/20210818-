@@ -1,0 +1,80 @@
+//컴퓨터공학과 20210818 안현수
+let cols, rows;
+let scl = 20;
+let w = 1400;
+let h = 1000;
+let flying = 0;
+let terrain = [];
+
+function setup() {
+  createCanvas(600, 600, WEBGL);
+  cols = w / scl;
+  rows = h / scl;
+
+  for (let x = 0; x < cols; x++) {
+    terrain[x] = [];
+    for (let y = 0; y < rows; y++) {
+      terrain[x][y] = 0; //specify a default value for now
+    }
+  }
+   noStroke();
+}
+
+function draw() {
+  flying -= 0.1;
+  let yoff = flying;
+  for (let y = 0; y < rows; y++) {
+    var xoff = 0;
+    for (let x = 0; x < cols; x++) {
+      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -100, 100);
+      xoff += 0.2;
+    }
+    yoff += 0.2;
+  }
+  background(200, 200, 255);
+  rotateX(PI / 3);
+  fill(164, 164, 164, 196);
+  translate(-w / 2, -h / 2);
+  for (let y = 0; y < rows - 1; y++) {
+    beginShape(TRIANGLE_STRIP);
+    for (let x = 0; x < cols; x++) {
+      let v = terrain[x][y];
+      fill(v+208, 0, 0, v+300);
+      vertex(x * scl, y * scl, terrain[x][y]);
+      vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
+      }
+      endShape();
+  }
+  
+  push();
+  translate(w/2,h/2);
+  translate(mouseX-width /2,(mouseY-height/2)*6);
+  ambientLight(60);
+  let locX = mouseX - width / 2;
+  let locY = mouseY - height / 2;
+  pointLight(255, 255, 255, locX, locY, 50);
+  specularMaterial(250);
+  shininess(50);
+  rotate(PI/5);
+  fill(200,100,50); // 행성의 색상 설정
+  sphere(100);
+  pop();
+  
+  // 고리 그리기
+  push();
+  ambientLight(60);
+  pointLight(255, 255, 255, locX, locY, 50);
+  specularMaterial(250);
+  shininess(30);
+  translate(w/2,h/2);
+  translate(mouseX-width /2,(mouseY-height/2)*6);
+  rotate(PI/5);
+  noStroke(); // 고리의 색상 설정
+  rotateX(frameCount * 0.02); // 회전
+  fill(200,120,140);
+  torus(200, 15); // 고리 그리기
+  pop();
+}
+// 매주 p5.js의 과제를 통하여 끊임없이 수업시간에 했던 내용을 복습하다보니 늘 쓰던 명령어 뿐만 아니라 원하는 모형을 만들기 위해서 어디 위치에 위치 시키고 어떤 크기로 해야하는지 감이 잡히다 보니 
+평소보다 과제하는 속도가 점점 줄어드는걸 느낍니다. 중간고사가 얼마 남지 않은 시점에서 하는 과제는 수업중에 했던 내용을 자연스럽게 복습 하는 과정이 되다보니 중간고사 대비 공부도 되고 과제도 하다보니
+더 빠르게 학습이 되는 느낌이라 좋았습니다. 앞으로도 잘 부탁드립니다.
